@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"os"
 	"shortli/internal/config"
+	"shortli/internal/http-server/handlers/url/save"
 	mwLogger "shortli/internal/http-server/middleware/logger"
 	"shortli/internal/lib/logger/handlers/slogpretty"
 	"shortli/internal/lib/logger/sl"
@@ -33,8 +34,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	_ = storage
-
 	router := chi.NewRouter()
 
 	router.Use(middleware.RequestID)
@@ -42,6 +41,8 @@ func main() {
 	router.Use(mwLogger.New(log))
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
+
+	router.Post("/url", save.New(log, storage))
 
 	// TODO: run server
 }
