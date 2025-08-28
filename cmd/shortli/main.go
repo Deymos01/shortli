@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/go-chi/chi/v5/middleware"
 	"log/slog"
+	"net/http"
 	"os"
 	"shortli/internal/config"
 	"shortli/internal/http-server/handlers/url/save"
@@ -44,7 +45,21 @@ func main() {
 
 	router.Post("/url", save.New(log, storage))
 
-	// TODO: run server
+	log.Info("starting server", slog.String("address", cfg.Address))
+
+	server := &http.Server{
+		Addr:         cfg.Address,
+		Handler:      router,
+		ReadTimeout:  cfg.HTTPServer.Timeout,
+		IdleTimeout:  cfg.HTTPServer.IdleTimeout,
+		WriteTimeout: cfg.HTTPServer.Timeout,
+	}
+
+	if err := server.ListenAndServe(); err != nil {
+		log.Error("failed to start server")
+	}
+
+	log.Error("server stopped")
 }
 
 func setupLogger(env string) *slog.Logger {
