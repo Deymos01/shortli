@@ -63,6 +63,6 @@ jobs:
         run: |
           scp -i deploy_key.pem -o StrictHostKeyChecking=no ${{ github.workspace }}/deployment/shortli.service ${{ env.HOST }}:/tmp/shortli.service
           ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "mv /tmp/shortli.service /etc/systemd/system/shortli.service"
-      - name: Start application
+      - name: Start the application
         run: |
           ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "systemctl daemon-reload && systemctl restart shortli.service"
