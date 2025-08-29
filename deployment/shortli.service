@@ -1,0 +1,15 @@
+[Unit]
+Description=Shorli
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/root/apps/shortli
+ExecStart=/root/apps/shortli/shortli
+Restart=always
+RestartSec=4
+StandardOutput=inherit
+EnvironmentFile=/root/apps/shortli/config.env
+
+[Install]
+WantedBy=multi-user.target
