@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"shortli/internal/config"
+	"shortli/internal/http-server/handlers/redirect"
 	"shortli/internal/http-server/handlers/url/save"
 	mwLogger "shortli/internal/http-server/middleware/logger"
 	"shortli/internal/lib/logger/handlers/slogpretty"
@@ -26,7 +27,11 @@ func main() {
 
 	log := setupLogger(cfg.Env)
 
-	log.Info("starting shortli", slog.String("env", cfg.Env))
+	log.Info(
+		"starting shortli",
+		slog.String("env", cfg.Env),
+		slog.String("version", "123"),
+	)
 	log.Debug("debug messages are enabled")
 
 	storage, err := sqlite.New(cfg.StoragePath)
@@ -43,7 +48,16 @@ func main() {
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
 
-	router.Post("/url", save.New(log, storage))
+	router.Route("/url", func(r chi.Router) {
+		r.Use(middleware.BasicAuth("shortli", map[string]string{
+			cfg.HTTPServer.User: cfg.HTTPServer.Password,
+		}))
+
+		r.Post("/", save.New(log, storage))
+		// TODO: add DELETE /url/{id}
+	})
+
+	router.Get("/{alias}", redirect.New(log, storage))
 
 	log.Info("starting server", slog.String("address", cfg.Address))
 
