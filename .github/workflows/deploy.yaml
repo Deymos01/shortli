@@ -11,7 +11,7 @@ jobs:
   deploy:
     runs-on: ubuntu-22.04
     env:
-      HOST: root@198.23.173.67
+      HOST: root@216.144.234.161
       DEPLOY_DIRECTORY: /root/apps/shortli
       CONFIG_PATH: /root/apps/shortli/config/prod.yaml
       ENV_FILE_PATH: /root/apps/shortli/config.env

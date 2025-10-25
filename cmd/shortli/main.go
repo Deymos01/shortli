@@ -1,10 +1,13 @@
 package main
 
 import (
-	"github.com/go-chi/chi/v5/middleware"
+	"context"
 	"log/slog"
 	"net/http"
 	"os"
+
+	ssogrpc "shortli/internal/clients/sso/grpc"
+
 	"shortli/internal/config"
 	"shortli/internal/http-server/handlers/redirect"
 	"shortli/internal/http-server/handlers/url/save"
@@ -12,6 +15,8 @@ import (
 	"shortli/internal/lib/logger/handlers/slogpretty"
 	"shortli/internal/lib/logger/sl"
 	"shortli/internal/storage/sqlite"
+
+	"github.com/go-chi/chi/v5/middleware"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -33,6 +38,20 @@ func main() {
 		slog.String("version", "123"),
 	)
 	log.Debug("debug messages are enabled")
+
+	ssoClient, err := ssogrpc.New(
+		context.Background(),
+		log,
+		cfg.Clients.SSO.Address,
+		cfg.Clients.SSO.Timeout,
+		cfg.Clients.SSO.RetriesCount,
+	)
+	if err != nil {
+		log.Error("failed to init sso client", sl.Err(err))
+		os.Exit(1)
+	}
+
+	ssoClient.IsAdmin(context.Background(), 1)
 
 	storage, err := sqlite.New(cfg.StoragePath)
 	if err != nil {
