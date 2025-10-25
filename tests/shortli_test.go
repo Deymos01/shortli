@@ -1,15 +1,17 @@
 package tests
 
 import (
-	"github.com/brianvoe/gofakeit/v6"
-	"github.com/gavv/httpexpect/v2"
-	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/url"
+	"path"
 	"shortli/internal/http-server/handlers/url/save"
 	"shortli/internal/lib/api"
 	"shortli/internal/lib/random"
 	"testing"
+
+	"github.com/brianvoe/gofakeit/v6"
+	"github.com/gavv/httpexpect/v2"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -60,7 +62,6 @@ func TestShortli_SaveRedirectRemove(t *testing.T) {
 			url:   gofakeit.URL(),
 			alias: "",
 		},
-		// TODO: add more test cases
 	}
 
 	for _, tc := range testCases {
@@ -106,17 +107,17 @@ func TestShortli_SaveRedirectRemove(t *testing.T) {
 			testRedirect(t, alias, tc.url)
 
 			// Remove
-			//
-			//reqDel := e.DELETE("/"+path.Join("url", alias)).
-			//	WithBasicAuth("myuser", "mypass").
-			//	Expect().Status(http.StatusOK).
-			//	JSON().Object()
-			//
-			//reqDel.Value("status").String().IsEqual("OK")
+
+			reqDel := e.DELETE("/"+path.Join("url", alias)).
+				WithBasicAuth("myuser", "mypass").
+				Expect().Status(http.StatusOK).
+				JSON().Object()
+
+			reqDel.Value("status").String().IsEqual("OK")
 
 			// Redirect again
-			//
-			//testRedirectNotFound(t, alias)
+
+			testRedirectNotFound(t, alias)
 		})
 	}
 }

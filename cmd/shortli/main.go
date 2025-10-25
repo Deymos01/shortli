@@ -1,17 +1,19 @@
 package main
 
 import (
-	"github.com/go-chi/chi/v5/middleware"
 	"log/slog"
 	"net/http"
 	"os"
 	"shortli/internal/config"
 	"shortli/internal/http-server/handlers/redirect"
+	"shortli/internal/http-server/handlers/url/remove"
 	"shortli/internal/http-server/handlers/url/save"
 	mwLogger "shortli/internal/http-server/middleware/logger"
 	"shortli/internal/lib/logger/handlers/slogpretty"
 	"shortli/internal/lib/logger/sl"
 	"shortli/internal/storage/sqlite"
+
+	"github.com/go-chi/chi/v5/middleware"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -54,7 +56,7 @@ func main() {
 		}))
 
 		r.Post("/", save.New(log, storage))
-		// TODO: add DELETE /url/{id}
+		r.Delete("/{alias}", remove.New(log, storage))
 	})
 
 	router.Get("/{alias}", redirect.New(log, storage))
