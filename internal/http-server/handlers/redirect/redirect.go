@@ -2,14 +2,15 @@ package redirect
 
 import (
 	"errors"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/render"
 	"log/slog"
 	"net/http"
 	resp "shortli/internal/lib/api/response"
 	"shortli/internal/lib/logger/sl"
 	"shortli/internal/storage"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/render"
 )
 
 // URLGetter is an interface for getting URLs by alias.

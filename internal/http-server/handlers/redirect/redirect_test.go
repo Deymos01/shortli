@@ -1,14 +1,15 @@
 package redirect_test
 
 import (
-	"github.com/go-chi/chi/v5"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"net/http/httptest"
 	"shortli/internal/http-server/handlers/redirect/mocks"
 	"shortli/internal/lib/api"
 	"shortli/internal/lib/logger/handlers/slogdiscard"
 	"testing"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"shortli/internal/http-server/handlers/redirect"
 )
