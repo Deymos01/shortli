@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 	"shortli/internal/storage"
 
 	"github.com/mattn/go-sqlite3"
@@ -28,6 +29,12 @@ func New(storagePath string) (*Storage, error) {
 	    url TEXT NOT NULL);
 	CREATE INDEX IF NOT EXISTS idx_alias ON url(alias);
 	`)
+	defer func() {
+		if err := stmt.Close(); err != nil {
+			log.Printf("failed to close statement: %v", err)
+		}
+	}()
+
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -47,7 +54,11 @@ func (s *Storage) SaveURL(urlToSave string, alias string) (int64, error) {
 	if err != nil {
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
-	defer stmt.Close()
+	defer func() {
+		if err := stmt.Close(); err != nil {
+			log.Printf("failed to close statement: %v", err)
+		}
+	}()
 
 	res, err := stmt.Exec(urlToSave, alias)
 	if err != nil {
@@ -74,7 +85,11 @@ func (s *Storage) GetURL(alias string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("%s: prepare statement: %w", op, err)
 	}
-	defer stmt.Close()
+	defer func() {
+		if err := stmt.Close(); err != nil {
+			log.Printf("failed to close statement: %v", err)
+		}
+	}()
 
 	var resURL string
 	err = stmt.QueryRow(alias).Scan(&resURL)
@@ -95,7 +110,11 @@ func (s *Storage) DeleteURL(alias string) error {
 	if err != nil {
 		return fmt.Errorf("%s: prepare statement: %w", op, err)
 	}
-	defer stmt.Close()
+	defer func() {
+		if err := stmt.Close(); err != nil {
+			log.Printf("failed to close statement: %v", err)
+		}
+	}()
 
 	res, err := stmt.Exec(alias)
 	if err != nil {
